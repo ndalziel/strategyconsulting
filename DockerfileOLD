@@ -1,0 +1,26 @@
+# Use official Jekyll image
+FROM jekyll/jekyll:latest
+
+# Set working directory
+WORKDIR /srv/jekyll
+
+# Install Node.js (Alpine uses apk)
+RUN apk add --no-cache nodejs npm
+
+# Copy project files
+COPY . .
+
+# Install Ruby gems
+RUN bundle install
+
+# Install Node devDependencies (sass)
+RUN npm install
+
+# Expose Jekyll port
+EXPOSE 4000
+
+# Compile SCSS via Node sass then serve Jekyll
+CMD npx sass --watch --update --style=expanded assets/scss:assets/css & \
+    jekyll serve --watch --force_polling --host 0.0.0.0
+
+
